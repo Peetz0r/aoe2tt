@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>AoE2 TT</title>
+  <script>
+    console.log('Start');
+
+    var cors = function(url) {
+      return 'https://universal-cors-proxy.glitch.me/'+encodeURIComponent(url);
+    }
+
+    var techtree = null;
+    var match = null;
+    var steamUser = null;
+
+    var userName = 'Peetz0r';
+
+    var steamURL = 'https://steamcommunity.com/';
+    steamURL += (RegExp('7[0-9]{16}').test(userName) ? 'profiles/' : 'id/') + userName + '/?xml=1';
+    console.log('checking user at '+steamURL);
+    fetch(cors(steamURL))
+      .then(response => response.text())
+      .then(data => {
+        x = new DOMParser().parseFromString(data, 'text/xml')
+        if (x.children[0].tagName == 'profile') {
+          steamUser = {};
+          steamUser.name = x.querySelector('steamID').textContent;
+          steamUser.steam_id = x.querySelector('steamID64').textContent;
+          steamUser.avatar = x.querySelector('avatarFull').textContent;
+          console.log(steamUser);
+          tryStart();
+        }
+      }
+    );
+
+    fetch('https://aoe2techtree.net/data/data.json')
+      .then(response => response.json())
+      .then(data => {
+        console.log('techtree downloaded');
+        techtree = data;
+        tryStart();
+        }
+      );
+
+    var tryStart = function() {
+      if(techtree && steamUser) {
+        console.log('yes, start');
+        checkMatch();
+        setInterval(checkMatch, 10*1000);
+      } else {
+        console.log('not yet');
+      }
+    }
+
+    var checkMatch = function() {
+      console.log('checking for match');
+      fetch(cors('https://aoe2.net/api/player/lastmatch?game=aoe2de&steam_id='+steamUser.steam_id))
+        .then(response => response.json())
+        .then(data => {
+          if(!match) {
+            console.log('first match');
+          } else if(match.last_match.match_id == data.last_match.match_id) {
+            console.log('same match');
+            console.log(match);
+          } else {
+            console.log('new match');
+          }
+          match = data;
+          document.querySelector('header').innerHTML = match.last_match.name;
+          document.querySelector('main').innerHTML = '';
+          for(player of match.last_match.players) {
+            let d = document.createElement('div');
+            d.innerHTML = '<h2>'+(player.name||'AI')+'</h2>';
+            d.innerHTML += '<h3>'+Object.keys(techtree.civ_names)[player.civ]+'</h3>';
+            d.innerHTML += techtree.strings[Object.values(techtree.civ_helptexts)[player.civ]];
+            d.classList.add('player');
+            d.classList.add('color-'+player.color);
+            d.classList.add('team-'+player.team);
+            document.querySelector('main').appendChild(d);
+          }
+        }
+      );
+    }
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    main {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 1em;
+    }
+    .player {
+      border: solid 4pt;
+      padding: 0.5em;
+    }
+
+    .color-1 { border-color: blue; }
+    .color-2 { border-color: red; }
+    .color-3 { border-color: lime; }
+    .color-4 { border-color: yellow; }
+    .color-5 { border-color: cyan; }
+    .color-6 { border-color: magenta; }
+    .color-7 { border-color: grey; }
+    .color-8 { border-color: orange; }
+  </style>
+</head>
+<body>
+  <header></header>
+  <main></main>
+</body>
+</html>
