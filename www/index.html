@@ -52,7 +52,7 @@
 
     var checkMatch = function() {
       console.log('checking for match');
-      fetch(cors('https://aoe2.net/api/player/lastmatch?game=aoe2de&steam_id='+steamUser.steam_id))
+      fetch('/match/'+steamUser.steam_id)
         .then(response => response.json())
         .then(data => {
           if(!match) {

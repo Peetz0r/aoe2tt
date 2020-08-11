@@ -11,3 +11,8 @@ uri /steam/* replace /steam /id
 reverse_proxy /id/* https://steamcommunity.com {
 	header_up Host {http.reverse_proxy.upstream.hostport}
 }
+
+rewrite /match/* /api/player/lastmatch?game=aoe2de&steam_id={path.file}
+reverse_proxy /api/player/lastmatch* https://aoe2.net {
+	header_up Host {http.reverse_proxy.upstream.hostport}
+}
