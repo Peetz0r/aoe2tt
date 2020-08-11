@@ -1,6 +1,6 @@
 file_server
 
-rewrite /steam/7* /profiles/{path.file}/?xml=1
+rewrite /steam/76561* /profiles/{path.file}/?xml=1
 reverse_proxy /profiles/* https://steamcommunity.com {
 	header_up Host {http.reverse_proxy.upstream.hostport}
 }
