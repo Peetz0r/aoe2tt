@@ -1,0 +1,13 @@
+file_server
+
+rewrite /steam/* {path}/?xml=1
+
+uri /steam/7* replace /steam /profiles
+reverse_proxy /profiles/* https://steamcommunity.com {
+	header_up Host {http.reverse_proxy.upstream.hostport}
+}
+
+uri /steam/* replace /steam /id
+reverse_proxy /id/* https://steamcommunity.com {
+	header_up Host {http.reverse_proxy.upstream.hostport}
+}
