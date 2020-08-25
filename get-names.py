@@ -23,9 +23,11 @@ except:
 for game in r.json():
   for player in game['players']:
     if player['profile_id']:
-      names[str(player['profile_id'])] = {'name': player['name'], 'ts': game['started']}
-      # ~ print(player['profile_id'], player['name'])
-
+      names[str(player['profile_id'])] = {
+        'name': player['name'],
+        'steam_id': player['steam_id'],
+        'ts': game['started'],
+      }
 
 with open('names.json-tmp', 'w') as outfile:
   json.dump(names, outfile)
