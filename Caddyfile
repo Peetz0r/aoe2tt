@@ -9,6 +9,9 @@ header {
 encode zstd gzip
 file_server
 
+@openid query openid.mode=*
+rewrite @openid /openid.html
+
 rewrite /steam/76561* /profiles/{path.file}/?xml=1
 reverse_proxy /profiles/* https://steamcommunity.com {
 	header_up Host {http.reverse_proxy.upstream.hostport}
