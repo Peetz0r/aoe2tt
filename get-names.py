@@ -1,4 +1,4 @@
-#!/bin/python3 -i
+#!/bin/python3
 
 import requests, json, datetime, os
 
@@ -13,9 +13,12 @@ r = requests.get('https://aoe2.net/api/matches', params={
 
 names = {}
 
-with open('names.json') as json_file:
-  names = json.load(json_file)
-n1 = len(names)
+try:
+  with open('names.json') as json_file:
+    names = json.load(json_file)
+  n1 = len(names)
+except:
+  n1 = 0
 
 for game in r.json():
   for player in game['players']:
