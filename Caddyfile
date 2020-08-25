@@ -1,3 +1,5 @@
+
+encode zstd gzip
 file_server
 
 rewrite /steam/76561* /profiles/{path.file}/?xml=1
